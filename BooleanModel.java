@@ -1,5 +1,5 @@
 import java.util.Scanner;
-
+import java.util.Arrays;
 public class BooleanModel {
 
     static  int countWithNoRep(String[] a) {
@@ -7,12 +7,9 @@ public class BooleanModel {
         boolean check = true;
         for(int i=0; i < a.length; i++){
             for(int j=i+1; j < a.length; j++){
-
                 if(a[i].equals(a[j])){
-
                     for(int k=i-1; k>=0; k--){
                         if(a[k].equals(a[i])){
-
                             check=false;
                             break;
                         }
@@ -25,6 +22,29 @@ public class BooleanModel {
         return a.length-count;
     }
 
+    static String[] removeRep(String[] a){
+        int noRepSize = countWithNoRep(a);
+        String[] removedRep = new String[noRepSize];
+
+        for(int i=0; i < removedRep.length; i++){
+            removedRep[i]=a[0];
+        }
+       int j=1;
+        for(int i=0; i < a.length; i++){
+            a:
+            for(int k=0; k < removedRep.length; k++){
+                if(removedRep[k].equals(a[i]) && j < noRepSize) break;
+                else if(!removedRep[k].equals(a[i]) && j < noRepSize){
+                    for(int l=0; l<noRepSize; l++){
+                        if(removedRep[l].equals(a[i])) break a;
+                    }
+                    removedRep[j] = a[i];
+                    j++;
+                }
+            }
+        }
+        return removedRep;
+    }
 
     public static void main(String[] args) {
         Scanner userInt = new Scanner(System.in);// For Integer data types
@@ -49,17 +69,18 @@ public class BooleanModel {
             }
         }
 
-        String[] allTerm = new String[sizeOfTerm]; // All terms in one Array List
+        String[] allTerm = new String[sizeOfTerm]; // All terms into one Array List
+
         int p=0;
-        for(String[] c: originalWord){
+        for(String[] c: originalWord){  //Assign values
             for(String i: c){
                 allTerm[p] = i;
                 p++;
             }
         }
 
-      String[] termNoRep= new String[countWithNoRep(allTerm)]; // Initialization Terms without repetition
-
+         Arrays.sort(allTerm); // Sort terms
+         String[] termNoRep = removeRep(allTerm);// Initialization Terms without repetition
 
 
 
