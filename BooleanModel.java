@@ -26,9 +26,7 @@ public class BooleanModel {
         int noRepSize = countWithNoRep(a);
         String[] removedRep = new String[noRepSize];
 
-        for(int i=0; i < removedRep.length; i++){
-            removedRep[i]=a[0];
-        }
+        Arrays.fill(removedRep,a[0]);
        int j=1;
         for(int i=0; i < a.length; i++){
             a:
@@ -50,7 +48,7 @@ public class BooleanModel {
         Scanner userInt = new Scanner(System.in);// For Integer data types
         Scanner userSt = new Scanner(System.in); //For String data types
 
-        int sizeOfDoc;
+        int sizeOfDoc;   // size of document
         System.out.println("Boolean Model of IR");
         System.out.print("Enter Number of Document: ");
         sizeOfDoc = userInt.nextInt();
@@ -69,6 +67,7 @@ public class BooleanModel {
             }
         }
 
+
         String[] allTerm = new String[sizeOfTerm]; // All terms into one Array List
 
         int p=0;
@@ -78,11 +77,13 @@ public class BooleanModel {
                 p++;
             }
         }
-
          Arrays.sort(allTerm); // Sort terms
-         String[] termNoRep = removeRep(allTerm);// Initialization Terms without repetition
 
-
+        String[] termNoRep = removeRep(allTerm);// Initialization Terms without repetition
+                System.out.print("Term          1            2 \n");
+        for(String k: termNoRep){
+            System.out.println(k);
+        }
 
     }
 }
