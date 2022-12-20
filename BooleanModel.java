@@ -80,10 +80,33 @@ public class BooleanModel {
          Arrays.sort(allTerm); // Sort terms
 
         String[] termNoRep = removeRep(allTerm);// Initialization Terms without repetition
-                System.out.print("Term          1            2 \n");
         for(String k: termNoRep){
             System.out.println(k);
         }
 
+        // Term Matrix
+        int[][] termMatrix = new int[termNoRep.length][sizeOfDoc];
+        int w=0;
+        for(int i=0; i < termNoRep.length; i++){
+            for(String[] j:originalWord){
+                for(String k:j){
+                    if(k.equals(termNoRep[i])){
+                        termMatrix[i][w] =1;
+                        w++;
+                         break;
+                    }else if(k.equals(j[j.length-1])){
+                        termMatrix[i][w] =0;
+                        w++;
+                    }
+                }
+            }
+            w=0;
+        }
+        for(int[] i: termMatrix){
+            for (int k: i){
+                System.out.print(k + " ");
+            }
+            System.out.println(" ");
+        }
     }
 }
