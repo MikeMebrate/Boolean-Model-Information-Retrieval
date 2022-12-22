@@ -26,6 +26,8 @@ public class BooleanModel {
         return termMatrix;
     }
 
+
+
     static  int countWithNoRep(String[] a) {
         int count=0;
         boolean check = true;
@@ -104,8 +106,18 @@ public class BooleanModel {
        int operationQuery=0;// to define how many operation will perform
        for(String i: queryTerm){
            System.out.println(i);
-           if(i.equals("AND") || i.equals("OR") || i.equals("NOT")) operationQuery++;
+           if(i.equals("AND") || i.equals("OR") || i.equals("NOT")) operationQuery++; //Count the operation
        }
+
+       String[] operation = new String[operationQuery];  // Initializing Operation
+       int k=0;
+        for(String i: queryTerm) {
+           if(i.equals("AND") || i.equals("OR") || i.equals("NOT")){
+               operation[k] = i; //Assigning Operation by their order
+               k++;
+           }
+       }
+
 
 
        System.out.println("\n\n");
@@ -124,77 +136,52 @@ public class BooleanModel {
          Arrays.sort(allTerm); // Sort terms
 
         String[] termNoRep = removeRep(allTerm);// Initialization Terms without repetition
-        // Term Matrix
-        String[][] termMatrix = matrix(termNoRep,originalWord,sizeOfDoc+1);
+
+        String[][] termMatrix = matrix(termNoRep,originalWord,sizeOfDoc+1);   // Term Matrix
+
         for(String[] i: termMatrix){
-            for (String k: i){
-                System.out.print(k + " ");
+            for (String q: i){
+                System.out.print(q + " ");
             }
             System.out.println(" ");
         }
 
-        int[] relevanceTem = new int[sizeOfDoc];
-        String[] querySmall = new String[3];
-        String[] querySmall2 = new String[2];
-       int c=0;
-       int centerQuery=queryTerm.length/2;
-        for(int i=0; i < querySmall.length; i++){
-            if(queryTerm.length > 3){
-                for(int j=c; j<=centerQuery; j++){
-                    if(queryTerm[centerQuery/2].equals("AND")){
-                        querySmall[i]=queryTerm[c];
-                    }
-                }
-            }else if(queryTerm.length==3){
-                querySmall[i]=queryTerm[i];
-            }else {
-                querySmall2[1] = queryTerm[queryTerm.length-1];
-                querySmall2[0] = queryTerm[queryTerm.length-2];
+        //Query Terms without operator
+        String[][] queryMatrix = new String[queryTerm.length - operationQuery][sizeOfDoc+1];
+        int z=0;
+        for(int j=0; j<queryMatrix.length; j++){
+            if (!queryTerm[z].equals("AND") && !queryTerm[z].equals("OR") && !queryTerm[z].equals("NOT")) {
+                queryMatrix[j][0] = queryTerm[z]; // Assign Query term as row
+                z++;
             }
-
+            z++;
         }
 
-        for (String k: queryTerm){
-            System.out.println(k);
-        }
-
-        String[][] tempResult = new String[2][sizeOfDoc];
-        int i=0,j=0,k=0,l=0;
-        while(operationQuery == 1){
-            while(i < 3){
-              if(querySmall[i].equals(termMatrix[j][0]) && i!=1){
-                    for(int q=1; q < termMatrix[j].length; q++){
-                       tempResult[l][k]=termMatrix[j][q];
-                        k++;
+       int a=1;
+        for(int j=0; j<queryMatrix.length; j++){
+                for(int b=0; b < termMatrix.length; b++){
+                    for(int c=1; c<termMatrix[b].length; c++){
+                        if(queryMatrix[j][0].equals(termMatrix[b][0]) && a < queryMatrix[j].length){
+                            queryMatrix[j][a] = termMatrix[b][c];
+                            a++;
+                        }
                     }
-                    k=0;
-                    l++;
-                    i++;
-                    j=0;
-                }else if(i==1) i++;
-                 else j++;
-            }
-            for(int a=0; a<relevanceTem.length; a++){
-                if(querySmall[1].equals("OR")){
-                    if (!(tempResult[0][a].equals(tempResult[1][a]))) relevanceTem[a] = 1;
-                    else if (tempResult[0][a].equals(tempResult[1][a]) && tempResult[0][a].equals("0")) relevanceTem[a] = 0;
-                    else if (tempResult[0][a].equals(tempResult[1][a])) relevanceTem[a] = 1;
-                    else relevanceTem[a] = 0;
-                }else if (querySmall[1].equals("AND")){
-                    if((tempResult[0][a].equals(tempResult[1][a]))) relevanceTem[a] = 1;
-                    else {
-                        relevanceTem[a] = 0;
-                    }
-                }
-
-            }
-          operationQuery++;
+               }
+            a=1;
         }
 
 
-            for(int g: relevanceTem){
-                System.out.print(g +" ");
+
+        for(String[] i:queryMatrix){
+            for(String m: i){
+                System.out.print(m + " ");
             }
+            System.out.println(" ");
+        }
+
+
+
+
 
     }
 }
