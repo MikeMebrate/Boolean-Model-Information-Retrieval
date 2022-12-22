@@ -2,6 +2,30 @@ import java.util.Scanner;
 import java.util.Arrays;
 public class BooleanModel {
 
+    static String[][] matrix(String[] termNoRep,String[][] originalWord,int sizeOfDoc){
+        String[][] termMatrix = new String[termNoRep.length][sizeOfDoc];
+        int w=1;
+        for(int i=0; i < termMatrix.length; i++){
+            termMatrix[i][0] = termNoRep[i];
+        }
+        for(int i=0; i < termNoRep.length; i++){
+            for(String[] j:originalWord){
+                for(int k=0; k<j.length; k++){
+                    if(j[k].equals(termNoRep[i])){
+                        termMatrix[i][w] ="1";
+                        w++;
+                        break;
+                    }else if(j[k].equals(j[j.length-1])){
+                        termMatrix[i][w] ="0";
+                        w++;
+                    }
+                }
+            }
+            w=1;
+        }
+        return termMatrix;
+    }
+
     static  int countWithNoRep(String[] a) {
         int count=0;
         boolean check = true;
@@ -28,15 +52,15 @@ public class BooleanModel {
 
         Arrays.fill(removedRep,a[0]);
        int j=1;
-        for(int i=0; i < a.length; i++){
+        for(String i: a){
             a:
             for(int k=0; k < removedRep.length; k++){
-                if(removedRep[k].equals(a[i]) && j < noRepSize) break;
-                else if(!removedRep[k].equals(a[i]) && j < noRepSize){
+                if(removedRep[k].equals(i) && j < noRepSize) break;
+                else if(!removedRep[k].equals(i) && j < noRepSize){
                     for(int l=0; l<noRepSize; l++){
-                        if(removedRep[l].equals(a[i])) break a;
+                        if(removedRep[l].equals(i)) break a;
                     }
-                    removedRep[j] = a[i];
+                    removedRep[j] = i;
                     j++;
                 }
             }
@@ -67,6 +91,26 @@ public class BooleanModel {
             }
         }
 
+        //Query
+        String originalQuery;
+        System.out.print("Enter the Query: ");
+        originalQuery = userSt.nextLine();
+
+        //Query Tokenization
+        String[] queryTerm;
+        queryTerm = originalQuery.split(" ");
+
+       System.out.println("Term Tokenization");
+       int operationQuery=0;// to define how many operation will perform
+       for(String i: queryTerm){
+           System.out.println(i);
+           if(i.equals("AND") || i.equals("OR") || i.equals("NOT")) operationQuery++;
+       }
+
+
+       System.out.println("\n\n");
+
+
 
         String[] allTerm = new String[sizeOfTerm]; // All terms into one Array List
 
@@ -80,33 +124,77 @@ public class BooleanModel {
          Arrays.sort(allTerm); // Sort terms
 
         String[] termNoRep = removeRep(allTerm);// Initialization Terms without repetition
-        for(String k: termNoRep){
-            System.out.println(k);
-        }
-
         // Term Matrix
-        int[][] termMatrix = new int[termNoRep.length][sizeOfDoc];
-        int w=0;
-        for(int i=0; i < termNoRep.length; i++){
-            for(String[] j:originalWord){
-                for(String k:j){
-                    if(k.equals(termNoRep[i])){
-                        termMatrix[i][w] =1;
-                        w++;
-                         break;
-                    }else if(k.equals(j[j.length-1])){
-                        termMatrix[i][w] =0;
-                        w++;
-                    }
-                }
-            }
-            w=0;
-        }
-        for(int[] i: termMatrix){
-            for (int k: i){
+        String[][] termMatrix = matrix(termNoRep,originalWord,sizeOfDoc+1);
+        for(String[] i: termMatrix){
+            for (String k: i){
                 System.out.print(k + " ");
             }
             System.out.println(" ");
         }
+
+        int[] relevanceTem = new int[sizeOfDoc];
+        String[] querySmall = new String[3];
+        String[] querySmall2 = new String[2];
+       int c=0;
+       int centerQuery=queryTerm.length/2;
+        for(int i=0; i < querySmall.length; i++){
+            if(queryTerm.length > 3){
+                for(int j=c; j<=centerQuery; j++){
+                    if(queryTerm[centerQuery/2].equals("AND")){
+                        querySmall[i]=queryTerm[c];
+                    }
+                }
+            }else if(queryTerm.length==3){
+                querySmall[i]=queryTerm[i];
+            }else {
+                querySmall2[1] = queryTerm[queryTerm.length-1];
+                querySmall2[0] = queryTerm[queryTerm.length-2];
+            }
+
+        }
+
+        for (String k: queryTerm){
+            System.out.println(k);
+        }
+
+        String[][] tempResult = new String[2][sizeOfDoc];
+        int i=0,j=0,k=0,l=0;
+        while(operationQuery == 1){
+            while(i < 3){
+              if(querySmall[i].equals(termMatrix[j][0]) && i!=1){
+                    for(int q=1; q < termMatrix[j].length; q++){
+                       tempResult[l][k]=termMatrix[j][q];
+                        k++;
+                    }
+                    k=0;
+                    l++;
+                    i++;
+                    j=0;
+                }else if(i==1) i++;
+                 else j++;
+            }
+            for(int a=0; a<relevanceTem.length; a++){
+                if(querySmall[1].equals("OR")){
+                    if (!(tempResult[0][a].equals(tempResult[1][a]))) relevanceTem[a] = 1;
+                    else if (tempResult[0][a].equals(tempResult[1][a]) && tempResult[0][a].equals("0")) relevanceTem[a] = 0;
+                    else if (tempResult[0][a].equals(tempResult[1][a])) relevanceTem[a] = 1;
+                    else relevanceTem[a] = 0;
+                }else if (querySmall[1].equals("AND")){
+                    if((tempResult[0][a].equals(tempResult[1][a]))) relevanceTem[a] = 1;
+                    else {
+                        relevanceTem[a] = 0;
+                    }
+                }
+
+            }
+          operationQuery++;
+        }
+
+
+            for(int g: relevanceTem){
+                System.out.print(g +" ");
+            }
+
     }
 }
