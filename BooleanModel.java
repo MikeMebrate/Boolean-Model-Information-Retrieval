@@ -145,17 +145,17 @@ public class BooleanModel {
             }
             System.out.println(" ");
         }
-
+        System.out.println("\n\n");
         //Query Terms without operator
-        String[][] queryMatrix = new String[queryTerm.length - operationQuery][sizeOfDoc+1];
+        String[][] queryMatrix = new String[queryTerm.length - operation.length][sizeOfDoc+1];
         int z=0;
-        for(int j=0; j<queryMatrix.length; j++){
-            if (!queryTerm[z].equals("AND") && !queryTerm[z].equals("OR") && !queryTerm[z].equals("NOT")) {
-                queryMatrix[j][0] = queryTerm[z]; // Assign Query term as row
+        for(int i=0; i < queryTerm.length; i++){
+            if (z < queryMatrix.length && !queryTerm[i].equals("AND") && !queryTerm[i].equals("OR") && !queryTerm[i].equals("NOT")) {
+                queryMatrix[z][0] = queryTerm[i];
                 z++;
             }
-            z++;
         }
+
 
        int a=1;
         for(int j=0; j<queryMatrix.length; j++){
@@ -171,17 +171,73 @@ public class BooleanModel {
         }
 
 
-
         for(String[] i:queryMatrix){
             for(String m: i){
                 System.out.print(m + " ");
             }
             System.out.println(" ");
         }
+        System.out.println("\n\n");
+
+        for(String i:operation){
+                System.out.print(i + " ");
+        }
+        System.out.println("\n\n");
+
+        int op=0;
+        int indexTemp=0;
+        int indexRow=0;
+        int[] tempResult = new int[sizeOfDoc];
+       while(operationQuery > 0 && indexTemp < tempResult.length && op < operation.length){
+           if(op == 0){
+               if(operation[op].equals("AND")){
+                   for(int i=indexRow; i < indexRow+2 && i < queryMatrix.length-1; i++){
+                       for(int j=1;j < queryMatrix[i].length; j++){
+                           if(indexTemp < tempResult.length){
+                               if((queryMatrix[i][j].equals("1") && queryMatrix[i+1][j].equals("1") || (queryMatrix[i][j].equals("0") && queryMatrix[i+1][j].equals("0") ))){
+                                   tempResult[indexTemp] = 1;
+                               }else {
+                                   tempResult[indexTemp] = 0;
+                               }
+                               indexTemp++;
+                           }
+                       }
+                   }
+                   op++;
+                   indexRow+=2;
+                   operationQuery--;
+               }else if(operation[op].equals("OR")){
+                   for(int i=indexRow; i < indexRow+2 && i < queryMatrix.length-1; i++){
+                       for(int j=1;j < queryMatrix[i].length; j++) {
+                           if (indexTemp < tempResult.length) {
+                               if ((queryMatrix[i][j].equals("0") && queryMatrix[i + 1][j].equals("0"))) {
+                                   tempResult[indexTemp] = 0;
+                               } else {
+                                   tempResult[indexTemp] = 1;
+                               }
+                               indexTemp++;
+                           }
+                       }
+                   }
+                   op++;
+                   indexRow+=2;
+                   operationQuery--;
+               }else if (operation[op].equals("NOT")){
+                  int j=1;
+                  if(queryMatrix[0][j].equals("1")){
+                      tempResult[indexTemp]=0;
+                  }else {
+                      tempResult[indexTemp]=1;
+                  }
+                  indexTemp++;
+               }
+           }
+       }
 
 
-
-
+        for(int i:tempResult){
+            System.out.print(i + " ");
+        }
 
     }
 }
