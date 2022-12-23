@@ -184,11 +184,12 @@ public class BooleanModel {
         }
         System.out.println("\n\n");
 
-        int op=0;
+        //int op=0;
         int indexTemp=0;
         int indexRow=0;
         int[] tempResult = new int[sizeOfDoc];
-       while(operationQuery > 0 && indexTemp < tempResult.length && op < operation.length){
+
+       for(int op=0; op < operationQuery; op++){
            if(op == 0){
                if(operation[op].equals("AND")){
                    for(int i=indexRow; i < indexRow+2 && i < queryMatrix.length-1; i++){
@@ -203,9 +204,8 @@ public class BooleanModel {
                            }
                        }
                    }
-                   op++;
-                   indexRow+=2;
-                   operationQuery--;
+                  // op++;
+                   indexRow++;
                }else if(operation[op].equals("OR")){
                    for(int i=indexRow; i < indexRow+2 && i < queryMatrix.length-1; i++){
                        for(int j=1;j < queryMatrix[i].length; j++) {
@@ -219,18 +219,65 @@ public class BooleanModel {
                            }
                        }
                    }
-                   op++;
-                   indexRow+=2;
-                   operationQuery--;
+                   indexRow++;
                }else if (operation[op].equals("NOT")){
-                  int j=1;
-                  if(queryMatrix[0][j].equals("1")){
-                      tempResult[indexTemp]=0;
-                  }else {
-                      tempResult[indexTemp]=1;
+
+                  for(int j=1; j < sizeOfDoc; j++) {
+                      if(queryMatrix[0][j].equals("1")){
+                          tempResult[indexTemp]=0;
+                      }else {
+                          tempResult[indexTemp]=1;
+                      }
+                      indexTemp++;
                   }
-                  indexTemp++;
+                  indexRow++;
                }
+           }else{
+               int indexMatrix =1;
+               indexTemp=0;
+               int[] tempResult1 = new int[tempResult.length];
+               int[] tempResult3 = new int[tempResult.length];
+               tempResult1 = tempResult;
+
+
+               if(operation[op].equals("AND")){
+                   for(int i=0; i < sizeOfDoc; i++){
+                       if(queryMatrix[indexRow][indexMatrix].equals("1") && tempResult1[indexTemp]==1){
+                           tempResult[indexTemp] = 1;
+                       }/*else if(queryMatrix[indexRow][indexMatrix].equals("0") && tempResult1[indexTemp]==0){
+                           tempResult[indexTemp] = 1;
+                           indexMatrix++;
+                           indexTemp++;
+                       }*/else{
+                           tempResult[indexTemp] = 0;
+                       }
+                       indexMatrix++;
+                       indexTemp++;
+                   }
+               }else if(operation[op].equals("OR")){
+                   for(int i=0; i < sizeOfDoc; i++){
+                       if(queryMatrix[indexRow][indexMatrix].equals("0") && tempResult1[indexTemp]==0){
+                           tempResult[indexTemp] = 0;
+                       }else{
+                           tempResult[indexTemp] = 1;
+                       }
+                       indexMatrix++;
+                       indexTemp++;
+                   }
+               }else if (operation[op].equals("NOT")) {
+                   for (int j = 1; j < queryMatrix[indexRow].length; j++) {
+                       if (queryMatrix[indexRow][j].equals("1")) {
+                           tempResult3[indexTemp] = 0;
+                       } else {
+                           tempResult3[indexTemp] = 1;
+                       }
+                       indexTemp++;
+                   }
+           // Here may have some problem's
+                   //Start from this part
+
+               }
+                   indexRow++;
            }
        }
 
