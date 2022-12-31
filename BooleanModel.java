@@ -53,7 +53,7 @@ public class BooleanModel {
         String[] removedRep = new String[noRepSize];
 
         Arrays.fill(removedRep,a[0]);
-       int j=1;
+        int j=1;
         for(String i: a){
             a:
             for(int k=0; k < removedRep.length; k++){
@@ -102,25 +102,25 @@ public class BooleanModel {
         String[] queryTerm;
         queryTerm = originalQuery.split(" ");
 
-       System.out.println("Term Tokenization");
-       int operationQuery=0;// to define how many operation will perform
-       for(String i: queryTerm){
-           System.out.println(i);
-           if(i.equals("AND") || i.equals("OR") || i.equals("NOT")) operationQuery++; //Count the operation
-       }
+        System.out.println("Term Tokenization");
+        int operationQuery=0;// to define how many operation will perform
+        for(String i: queryTerm){
+            System.out.println(i);
+            if(i.equals("AND") || i.equals("OR") || i.equals("NOT")) operationQuery++; //Count the operation
+        }
 
-       String[] operation = new String[operationQuery];  // Initializing Operation
-       int k=0;
+        String[] operation = new String[operationQuery];  // Initializing Operation
+        int k=0;
         for(String i: queryTerm) {
-           if(i.equals("AND") || i.equals("OR") || i.equals("NOT")){
-               operation[k] = i; //Assigning Operation by their order
-               k++;
-           }
-       }
+            if(i.equals("AND") || i.equals("OR") || i.equals("NOT")){
+                operation[k] = i; //Assigning Operation by their order
+                k++;
+            }
+        }
 
 
 
-       System.out.println("\n\n");
+        System.out.println("\n\n");
 
 
 
@@ -133,7 +133,7 @@ public class BooleanModel {
                 p++;
             }
         }
-         Arrays.sort(allTerm); // Sort terms
+        Arrays.sort(allTerm); // Sort terms
 
         String[] termNoRep = removeRep(allTerm);// Initialization Terms without repetition
 
@@ -157,16 +157,16 @@ public class BooleanModel {
         }
 
 
-       int a=1;
+        int a=1;
         for(int j=0; j<queryMatrix.length; j++){
-                for(int b=0; b < termMatrix.length; b++){
-                    for(int c=1; c<termMatrix[b].length; c++){
-                        if(queryMatrix[j][0].equals(termMatrix[b][0]) && a < queryMatrix[j].length){
-                            queryMatrix[j][a] = termMatrix[b][c];
-                            a++;
-                        }
+            for(int b=0; b < termMatrix.length; b++){
+                for(int c=1; c<termMatrix[b].length; c++){
+                    if(queryMatrix[j][0].equals(termMatrix[b][0]) && a < queryMatrix[j].length){
+                        queryMatrix[j][a] = termMatrix[b][c];
+                        a++;
                     }
-               }
+                }
+            }
             a=1;
         }
 
@@ -180,7 +180,7 @@ public class BooleanModel {
         System.out.println("\n\n");
 
         for(String i:operation){
-                System.out.print(i + " ");
+            System.out.print(i + " ");
         }
         System.out.println("\n\n");
 
@@ -189,97 +189,97 @@ public class BooleanModel {
         int indexRow=0;
         int[] tempResult = new int[sizeOfDoc];
 
-       for(int op=0; op < operationQuery; op++){
-           if(op == 0){
-               if(operation[op].equals("AND")){
-                   for(int i=indexRow; i < indexRow+2 && i < queryMatrix.length-1; i++){
-                       for(int j=1;j < queryMatrix[i].length; j++){
-                           if(indexTemp < tempResult.length){
-                               if((queryMatrix[i][j].equals("1") && queryMatrix[i+1][j].equals("1") || (queryMatrix[i][j].equals("0") && queryMatrix[i+1][j].equals("0") ))){
-                                   tempResult[indexTemp] = 1;
-                               }else {
-                                   tempResult[indexTemp] = 0;
-                               }
-                               indexTemp++;
-                           }
-                       }
-                   }
-                  // op++;
-                   indexRow++;
-               }else if(operation[op].equals("OR")){
-                   for(int i=indexRow; i < indexRow+2 && i < queryMatrix.length-1; i++){
-                       for(int j=1;j < queryMatrix[i].length; j++) {
-                           if (indexTemp < tempResult.length) {
-                               if ((queryMatrix[i][j].equals("0") && queryMatrix[i + 1][j].equals("0"))) {
-                                   tempResult[indexTemp] = 0;
-                               } else {
-                                   tempResult[indexTemp] = 1;
-                               }
-                               indexTemp++;
-                           }
-                       }
-                   }
-                   indexRow++;
-               }else if (operation[op].equals("NOT")){
+        for(int op=0; op < operationQuery; op++){
+            if(op == 0){
+                if(operation[op].equals("AND")){
+                    for(int i=indexRow; i < indexRow+2 && i < queryMatrix.length-1; i++){
+                        for(int j=1;j < queryMatrix[i].length; j++){
+                            if(indexTemp < tempResult.length){
+                                if((queryMatrix[i][j].equals("1") && queryMatrix[i+1][j].equals("1") || (queryMatrix[i][j].equals("0") && queryMatrix[i+1][j].equals("0") ))){
+                                    tempResult[indexTemp] = 1;
+                                }else {
+                                    tempResult[indexTemp] = 0;
+                                }
+                                indexTemp++;
+                            }
+                        }
+                    }
+                    // op++;
+                    indexRow++;
+                }else if(operation[op].equals("OR")){
+                    for(int i=indexRow; i < indexRow+2 && i < queryMatrix.length-1; i++){
+                        for(int j=1;j < queryMatrix[i].length; j++) {
+                            if (indexTemp < tempResult.length) {
+                                if ((queryMatrix[i][j].equals("0") && queryMatrix[i + 1][j].equals("0"))) {
+                                    tempResult[indexTemp] = 0;
+                                } else {
+                                    tempResult[indexTemp] = 1;
+                                }
+                                indexTemp++;
+                            }
+                        }
+                    }
+                    indexRow++;
+                }else if (operation[op].equals("NOT")){
 
-                  for(int j=1; j < sizeOfDoc; j++) {
-                      if(queryMatrix[0][j].equals("1")){
-                          tempResult[indexTemp]=0;
-                      }else {
-                          tempResult[indexTemp]=1;
-                      }
-                      indexTemp++;
-                  }
-                  indexRow++;
-               }
-           }else{
-               int indexMatrix =1;
-               indexTemp=0;
-               int[] tempResult1 = new int[tempResult.length];
-               int[] tempResult3 = new int[tempResult.length];
-               tempResult1 = tempResult;
+                    for(int j=1; j < sizeOfDoc; j++) {
+                        if(queryMatrix[0][j].equals("1")){
+                            tempResult[indexTemp]=0;
+                        }else {
+                            tempResult[indexTemp]=1;
+                        }
+                        indexTemp++;
+                    }
+                    indexRow++;
+                }
+            }else{
+                int indexMatrix =1;
+                indexTemp=0;
+                int[] tempResult1 = new int[tempResult.length];
+                int[] tempResult3 = new int[tempResult.length];
+                tempResult1 = tempResult;
 
 
-               if(operation[op].equals("AND")){
-                   for(int i=0; i < sizeOfDoc; i++){
-                       if(queryMatrix[indexRow][indexMatrix].equals("1") && tempResult1[indexTemp]==1){
-                           tempResult[indexTemp] = 1;
-                       }/*else if(queryMatrix[indexRow][indexMatrix].equals("0") && tempResult1[indexTemp]==0){
+                if(operation[op].equals("AND")){
+                    for(int i=0; i < sizeOfDoc; i++){
+                        if(queryMatrix[indexRow][indexMatrix].equals("1") && tempResult1[indexTemp]==1){
+                            tempResult[indexTemp] = 1;
+                        }/*else if(queryMatrix[indexRow][indexMatrix].equals("0") && tempResult1[indexTemp]==0){
                            tempResult[indexTemp] = 1;
                            indexMatrix++;
                            indexTemp++;
                        }*/else{
-                           tempResult[indexTemp] = 0;
-                       }
-                       indexMatrix++;
-                       indexTemp++;
-                   }
-               }else if(operation[op].equals("OR")){
-                   for(int i=0; i < sizeOfDoc; i++){
-                       if(queryMatrix[indexRow][indexMatrix].equals("0") && tempResult1[indexTemp]==0){
-                           tempResult[indexTemp] = 0;
-                       }else{
-                           tempResult[indexTemp] = 1;
-                       }
-                       indexMatrix++;
-                       indexTemp++;
-                   }
-               }else if (operation[op].equals("NOT")) {
-                   for (int j = 1; j < queryMatrix[indexRow].length; j++) {
-                       if (queryMatrix[indexRow][j].equals("1")) {
-                           tempResult3[indexTemp] = 0;
-                       } else {
-                           tempResult3[indexTemp] = 1;
-                       }
-                       indexTemp++;
-                   }
-           // Here may have some problem's
-                   //Start from this part
+                            tempResult[indexTemp] = 0;
+                        }
+                        indexMatrix++;
+                        indexTemp++;
+                    }
+                }else if(operation[op].equals("OR")){
+                    for(int i=0; i < sizeOfDoc; i++){
+                        if(queryMatrix[indexRow][indexMatrix].equals("0") && tempResult1[indexTemp]==0){
+                            tempResult[indexTemp] = 0;
+                        }else{
+                            tempResult[indexTemp] = 1;
+                        }
+                        indexMatrix++;
+                        indexTemp++;
+                    }
+                }else if (operation[op].equals("NOT")) {
+                    for (int j = 1; j < queryMatrix[indexRow].length; j++) {
+                        if (queryMatrix[indexRow][j].equals("1")) {
+                            tempResult3[indexTemp] = 0;
+                        } else {
+                            tempResult3[indexTemp] = 1;
+                        }
+                        indexTemp++;
+                    }
+                    // Here may have some problem's
+                    //Start from this part
 
-               }
-                   indexRow++;
-           }
-       }
+                }
+                indexRow++;
+            }
+        }
 
 
         for(int i:tempResult){
