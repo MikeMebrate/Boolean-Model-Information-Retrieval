@@ -2,6 +2,42 @@ import java.util.Scanner;
 import java.util.Arrays;
 public class BooleanModel {
 
+    static void menu(int[] tempResult){
+        Scanner userInt = new Scanner(System.in);
+        System.out.println("Menu");
+        System.out.println("1.For relevant Document");
+        System.out.println("2.For non-relevant Document");
+        System.out.println("3.For Exit");
+        System.out.print("Enter Option: ");
+        int option=userInt.nextInt();
+        if(option==1){
+            int docID=1;
+            for(int i:tempResult){
+                if(i==1) System.out.println("Document "+ docID + " is relevant");
+                docID++;
+            }
+
+            System.out.println(" ");
+            menu(tempResult);
+        }else if(option==2){
+
+            int docID=1;
+            for(int i:tempResult){
+                if(i==0) System.out.println("Document "+ docID + " is non-relevant");
+                docID++;
+            }
+            System.out.println(" ");
+            menu(tempResult);
+        }else if(option == 3){
+            System.exit(0);
+        }
+        else{
+            System.out.print("Incorrect Input");
+            System.out.println(" ");
+            menu(tempResult);
+        }
+    }
+
     static String[][] matrix(String[] termNoRep,String[][] originalWord,int sizeOfDoc){
         String[][] termMatrix = new String[termNoRep.length][sizeOfDoc];
         int w=1;
@@ -102,10 +138,10 @@ public class BooleanModel {
         String[] queryTerm;
         queryTerm = originalQuery.split(" ");
 
-        System.out.println("Term Tokenization");
+      //  System.out.println("Term Tokenization");
         int operationQuery=0;// to define how many operation will perform
         for(String i: queryTerm){
-            System.out.println(i);
+            //System.out.println(i);
             if(i.equals("AND") || i.equals("OR") || i.equals("NOT")) operationQuery++; //Count the operation
         }
 
@@ -139,13 +175,12 @@ public class BooleanModel {
 
         String[][] termMatrix = matrix(termNoRep,originalWord,sizeOfDoc+1);   // Term Matrix
 
-        for(String[] i: termMatrix){
+       /* for(String[] i: termMatrix){
             for (String q: i){
                 System.out.print(q + " ");
             }
             System.out.println(" ");
-        }
-        System.out.println("\n\n");
+        }*/
         //Query Terms without operator
         String[][] queryMatrix = new String[queryTerm.length - operation.length][sizeOfDoc+1];
         int z=0;
@@ -170,19 +205,19 @@ public class BooleanModel {
             a=1;
         }
 
-
+/*
         for(String[] i:queryMatrix){
             for(String m: i){
                 System.out.print(m + " ");
             }
             System.out.println(" ");
         }
-        System.out.println("\n\n");
+        System.out.println("\n\n");*/
 
-        for(String i:operation){
-            System.out.print(i + " ");
-        }
-        System.out.println("\n\n");
+      //  for(String i:operation){
+        //    System.out.print(i + " ");
+       // }
+      //  System.out.println("\n\n");
 
         //int op=0;
         int indexTemp=0;
@@ -205,7 +240,7 @@ public class BooleanModel {
                         }
                     }
                     // op++;
-                    indexRow++;
+                    indexRow+=2;
                 }else if(operation[op].equals("OR")){
                     for(int i=indexRow; i < indexRow+2 && i < queryMatrix.length-1; i++){
                         for(int j=1;j < queryMatrix[i].length; j++) {
@@ -215,14 +250,14 @@ public class BooleanModel {
                                 } else {
                                     tempResult[indexTemp] = 1;
                                 }
-                                indexTemp++;
+                                indexTemp+=2;
                             }
                         }
                     }
                     indexRow++;
                 }else if (operation[op].equals("NOT")){
 
-                    for(int j=1; j < sizeOfDoc; j++) {
+                    for(int j=1; j < sizeOfDoc+1; j++) {
                         if(queryMatrix[0][j].equals("1")){
                             tempResult[indexTemp]=0;
                         }else {
@@ -230,7 +265,7 @@ public class BooleanModel {
                         }
                         indexTemp++;
                     }
-                    indexRow++;
+                    indexRow+=2;
                 }
             }else{
                 int indexMatrix =1;
@@ -244,11 +279,7 @@ public class BooleanModel {
                     for(int i=0; i < sizeOfDoc; i++){
                         if(queryMatrix[indexRow][indexMatrix].equals("1") && tempResult1[indexTemp]==1){
                             tempResult[indexTemp] = 1;
-                        }/*else if(queryMatrix[indexRow][indexMatrix].equals("0") && tempResult1[indexTemp]==0){
-                           tempResult[indexTemp] = 1;
-                           indexMatrix++;
-                           indexTemp++;
-                       }*/else{
+                        }else{
                             tempResult[indexTemp] = 0;
                         }
                         indexMatrix++;
@@ -280,11 +311,9 @@ public class BooleanModel {
                 indexRow++;
             }
         }
+          menu(tempResult);
 
 
-        for(int i:tempResult){
-            System.out.print(i + " ");
-        }
 
     }
 }
