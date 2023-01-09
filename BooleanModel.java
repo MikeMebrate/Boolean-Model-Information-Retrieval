@@ -76,6 +76,7 @@ public class BooleanModel {
                             break;
                         }
                     }
+                    //
                     if(check) count++;
                     else check = true;
                 }
